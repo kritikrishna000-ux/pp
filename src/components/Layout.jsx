@@ -109,10 +109,14 @@ export default function Layout({ children }) {
             </button>
             
             <div className="flex items-center gap-3">
-              <img
-                src="/images/lightmodelogo.png"
+              <motion.img
+                src={isDarkMode ? "/images/logo2.png" : "/images/lightmodelogo.png"}
                 alt="Phish Defense News Logo"
-                className="w-2xs h-fit object-contain"
+                className="w-2xs h-fit object-contain transition-opacity duration-500"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5 }}
+                key={isDarkMode ? 'dark-logo' : 'light-logo'}
               />
             </div>
           </div>
@@ -238,10 +242,11 @@ export default function Layout({ children }) {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <NavLink
                   to="/bookmarks"
-                  className={`p-2 rounded-lg transition-colors ${
+                  className={`p-2 rounded-lg transition-all duration-300 transform hover:scale-110 ${
                     isDarkMode 
                       ? 'hover:bg-gray-700 text-gray-400 hover:text-teal-400' 
                       : 'hover:bg-gray-100 text-gray-600 hover:text-teal-600'
@@ -254,13 +259,14 @@ export default function Layout({ children }) {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
                 <NavLink
                   to="/settings"
-                  className={`p-2 rounded-lg transition-colors ${
+                  className={`p-2 rounded-lg transition-all duration-300 transform hover:scale-110 hover:rotate-12 ${
                     isDarkMode 
-                      ? 'hover:bg-gray-700 text-gray-400 hover:text-teal-400' 
-                      : 'hover:bg-gray-100 text-gray-600 hover:text-teal-600'
+                      ? 'hover:bg-gray-700 text-gray-400 hover:text-teal-400 hover:shadow-lg' 
+                      : 'hover:bg-gray-100 text-gray-600 hover:text-teal-600 hover:shadow-lg'
                   }`}
                 >
                   <FaCog />

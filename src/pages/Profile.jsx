@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { userAPI, locationAPI } from '../services/api';
 import { FaUser, FaCog, FaHistory, FaBookmark, FaHeart, FaGlobe, FaNewspaper, FaSave } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Profile() {
+  const { isDarkMode } = useTheme();
   const { user, logout, updateUser } = useAuth();
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -114,23 +117,86 @@ export default function Profile() {
   }
 
   return (
-    <div className="p-4 max-w-4xl mx-auto">
-      <div className="bg-gray-800 rounded-lg shadow-lg border border-gray-700">
+    <motion.div 
+      className={`p-4 max-w-4xl mx-auto min-h-screen transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-900' : 'bg-gray-50'
+      }`}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <motion.div 
+        className={`rounded-xl shadow-2xl border transition-colors duration-300 ${
+          isDarkMode 
+            ? 'bg-gray-800 border-gray-700' 
+            : 'bg-white border-gray-200'
+        }`}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         {/* Header */}
-        <div className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-6 rounded-t-lg">
+        <motion.div 
+          className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white p-8 rounded-t-xl relative overflow-hidden"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          {/* Background Pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 left-0 w-32 h-32 bg-white rounded-full -translate-x-16 -translate-y-16"></div>
+            <div className="absolute bottom-0 right-0 w-24 h-24 bg-white rounded-full translate-x-12 translate-y-12"></div>
+            <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-white rounded-full"></div>
+          </div>
+          
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
-              <FaUser className="text-2xl" />
-            </div>
+            <motion.div 
+              className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border-2 border-white/30"
+              whileHover={{ scale: 1.1, rotate: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <motion.div
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              >
+                <FaUser className="text-3xl" />
+              </motion.div>
+            </motion.div>
             <div>
-              <h1 className="text-2xl font-bold">{user.username || user.email}</h1>
-              <p className="text-cyan-100">News Aggregator User</p>
+              <motion.h1 
+                className="text-3xl font-bold mb-1"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                {user.username || user.email}
+              </motion.h1>
+              <motion.p 
+                className="text-cyan-100 text-lg"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5, duration: 0.5 }}
+              >
+                News Aggregator User
+              </motion.p>
+              <motion.div 
+                className="flex items-center gap-4 mt-2 text-sm text-cyan-200"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                <span>📊 {user.bookmarks?.length || 0} Bookmarks</span>
+                <span>❤️ {user.liked_articles?.length || 0} Liked</span>
+                <span>📖 {user.reading_history?.length || 0} Read</span>
+              </motion.div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Navigation Tabs */}
-        <div className="border-b border-gray-700">
+        <div className={`border-b ${
+          isDarkMode ? 'border-gray-700' : 'border-gray-200'
+        }`}>
           <nav className="flex">
             {[
               { id: 'profile', label: 'Profile', icon: FaUser },
@@ -139,48 +205,140 @@ export default function Profile() {
               { id: 'bookmarks', label: 'Bookmarks', icon: FaBookmark },
               { id: 'liked', label: 'Liked Articles', icon: FaHeart }
             ].map(tab => (
-              <button
+              <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-6 py-3 flex items-center gap-2 transition-colors ${
+                className={`px-6 py-4 flex items-center gap-2 transition-all duration-300 font-medium relative ${
                   activeTab === tab.id
-                    ? 'border-b-2 border-cyan-500 text-cyan-400 font-semibold'
-                    : 'text-gray-400 hover:text-gray-300'
+                    ? isDarkMode 
+                      ? 'text-cyan-400' 
+                      : 'text-cyan-600'
+                    : isDarkMode 
+                      ? 'text-gray-400 hover:text-gray-300' 
+                      : 'text-gray-600 hover:text-gray-900'
                 }`}
+                whileHover={{ y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
+                {activeTab === tab.id && (
+                  <motion.div 
+                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-cyan-500"
+                    layoutId="activeTab"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
                 <tab.icon className="text-sm" />
                 {tab.label}
-              </button>
+              </motion.button>
             ))}
           </nav>
         </div>
 
         {/* Tab Content */}
-        <div className="p-6">
+        <motion.div 
+          className="p-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5 }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3 }}
+            >
           {/* Profile Tab */}
           {activeTab === 'profile' && (
             <div className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
-                <div className="bg-gray-700 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2 text-white">Account Information</h3>
-                  <p className="text-gray-300"><strong>Email:</strong> {user.email}</p>
-                  <p className="text-gray-300"><strong>Username:</strong> {user.username || 'N/A'}</p>
-                  <p className="text-gray-300"><strong>Member since:</strong> {new Date().toLocaleDateString()}</p>
-                  <p className="text-gray-300"><strong>Detected Location:</strong> {detectedLocation ? `${detectedLocation.city || ''}${detectedLocation.city ? ', ' : ''}${detectedLocation.region || ''}${detectedLocation.region ? ', ' : ''}${detectedLocation.country_name || detectedLocation.country_code || 'Unknown'}` : 'Detecting...'}</p>
-                </div>
-                <div className="bg-gray-700 p-4 rounded-lg">
-                  <h3 className="font-semibold mb-2 text-white">Statistics</h3>
-                  <p className="text-gray-300"><strong>Bookmarks:</strong> {user.bookmarks?.length || 0}</p>
-                  <p className="text-gray-300"><strong>Liked articles:</strong> {user.liked_articles?.length || 0}</p>
-                  <p className="text-gray-300"><strong>Reading history:</strong> {user.reading_history?.length || 0}</p>
-                </div>
+                <motion.div 
+                  className={`p-6 rounded-xl border ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600' 
+                      : 'bg-gray-50 border-gray-200'
+                  }`}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center">
+                      <FaUser className="text-white" />
+                    </div>
+                    <h3 className={`font-bold text-lg ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>Account Information</h3>
+                  </div>
+                  <div className="space-y-3">
+                    <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      <strong className="text-cyan-500">Email:</strong> {user.email}
+                    </p>
+                    <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      <strong className="text-cyan-500">Username:</strong> {user.username || 'N/A'}
+                    </p>
+                    <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      <strong className="text-cyan-500">Member since:</strong> {new Date().toLocaleDateString()}
+                    </p>
+                    <p className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>
+                      <strong className="text-cyan-500">Location:</strong> {detectedLocation ? `${detectedLocation.city || ''}${detectedLocation.city ? ', ' : ''}${detectedLocation.region || ''}${detectedLocation.region ? ', ' : ''}${detectedLocation.country_name || detectedLocation.country_code || 'Unknown'}` : 'Detecting...'}
+                    </p>
+                  </div>
+                </motion.div>
+                <motion.div 
+                  className={`p-6 rounded-xl border ${
+                    isDarkMode 
+                      ? 'bg-gray-700 border-gray-600' 
+                      : 'bg-gray-50 border-gray-200'
+                  }`}
+                  whileHover={{ scale: 1.02, y: -5 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
+                      <FaNewspaper className="text-white" />
+                    </div>
+                    <h3 className={`font-bold text-lg ${
+                      isDarkMode ? 'text-white' : 'text-gray-900'
+                    }`}>Statistics</h3>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className={`p-3 rounded-lg ${
+                      isDarkMode ? 'bg-gray-600' : 'bg-white'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Bookmarks</span>
+                        <span className="text-2xl font-bold text-cyan-500">{user.bookmarks?.length || 0}</span>
+                      </div>
+                    </div>
+                    <div className={`p-3 rounded-lg ${
+                      isDarkMode ? 'bg-gray-600' : 'bg-white'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Liked Articles</span>
+                        <span className="text-2xl font-bold text-pink-500">{user.liked_articles?.length || 0}</span>
+                      </div>
+                    </div>
+                    <div className={`p-3 rounded-lg ${
+                      isDarkMode ? 'bg-gray-600' : 'bg-white'
+                    }`}>
+                      <div className="flex items-center justify-between">
+                        <span className={isDarkMode ? 'text-gray-300' : 'text-gray-700'}>Reading History</span>
+                        <span className="text-2xl font-bold text-green-500">{user.reading_history?.length || 0}</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
               </div>
-              <button
+              <motion.button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                className="px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all duration-300 font-medium flex items-center gap-2"
+                whileHover={{ scale: 1.05, y: -2 }}
+                whileTap={{ scale: 0.95 }}
               >
+                <FaUser className="text-sm" />
                 Logout
-              </button>
+              </motion.button>
             </div>
           )}
 
@@ -188,154 +346,295 @@ export default function Profile() {
           {activeTab === 'preferences' && (
             <div className="space-y-6">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">News Preferences</h3>
-                <button
+                <h3 className={`text-xl font-bold ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>News Preferences</h3>
+                <motion.button
                   onClick={savePreferences}
-                  className="px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600 flex items-center gap-2"
+                  className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 flex items-center gap-2 font-medium transition-all duration-300"
+                  whileHover={{ scale: 1.05, y: -2 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   <FaSave className="text-sm" />
                   Save Preferences
-                </button>
+                </motion.button>
               </div>
 
               {/* Countries */}
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2 text-white">
+              <motion.div 
+                className={`p-6 rounded-xl border ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600' 
+                    : 'bg-gray-50 border-gray-200'
+                }`}
+                whileHover={{ scale: 1.01 }}
+              >
+                <h4 className={`font-bold text-lg mb-4 flex items-center gap-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                   <FaGlobe />
                   Preferred Countries
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {countries.map(country => (
-                    <label key={country.code} className="flex items-center gap-2 text-gray-300">
+                    <motion.label 
+                      key={country.code} 
+                      className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                        isDarkMode 
+                          ? 'text-gray-300 hover:bg-gray-600' 
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                    >
                       <input
                         type="checkbox"
                         checked={preferences.countries.includes(country.code)}
                         onChange={(e) => handlePreferenceChange('countries', country.code, e.target.checked)}
-                        className="rounded bg-gray-700 border-gray-600"
+                        className={`rounded ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600' 
+                            : 'bg-white border-gray-300'
+                        }`}
                       />
                       {country.name}
-                    </label>
+                    </motion.label>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Topics */}
-              <div>
-                <h4 className="font-semibold mb-3 flex items-center gap-2 text-white">
+              <motion.div 
+                className={`p-6 rounded-xl border ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600' 
+                    : 'bg-gray-50 border-gray-200'
+                }`}
+                whileHover={{ scale: 1.01 }}
+              >
+                <h4 className={`font-bold text-lg mb-4 flex items-center gap-2 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                   <FaNewspaper />
                   Preferred Topics
                 </h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {topics.map(topic => (
-                    <label key={topic} className="flex items-center gap-2 text-gray-300">
+                    <motion.label 
+                      key={topic} 
+                      className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                        isDarkMode 
+                          ? 'text-gray-300 hover:bg-gray-600' 
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                    >
                       <input
                         type="checkbox"
                         checked={preferences.topics.includes(topic)}
                         onChange={(e) => handlePreferenceChange('topics', topic, e.target.checked)}
-                        className="rounded bg-gray-700 border-gray-600"
+                        className={`rounded ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600' 
+                            : 'bg-white border-gray-300'
+                        }`}
                       />
                       {topic.charAt(0).toUpperCase() + topic.slice(1)}
-                    </label>
+                    </motion.label>
                   ))}
                 </div>
-              </div>
+              </motion.div>
 
               {/* Sources */}
-              <div>
-                <h4 className="font-semibold mb-3 text-white">Preferred Sources</h4>
+              <motion.div 
+                className={`p-6 rounded-xl border ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600' 
+                    : 'bg-gray-50 border-gray-200'
+                }`}
+                whileHover={{ scale: 1.01 }}
+              >
+                <h4 className={`font-bold text-lg mb-4 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>Preferred Sources</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {sources.map(source => (
-                    <label key={source} className="flex items-center gap-2 text-gray-300">
+                    <motion.label 
+                      key={source} 
+                      className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-colors duration-200 ${
+                        isDarkMode 
+                          ? 'text-gray-300 hover:bg-gray-600' 
+                          : 'text-gray-700 hover:bg-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.02 }}
+                    >
                       <input
                         type="checkbox"
                         checked={preferences.sources.includes(source)}
                         onChange={(e) => handlePreferenceChange('sources', source, e.target.checked)}
-                        className="rounded bg-gray-700 border-gray-600"
+                        className={`rounded ${
+                          isDarkMode 
+                            ? 'bg-gray-700 border-gray-600' 
+                            : 'bg-white border-gray-300'
+                        }`}
                       />
                       {source}
-                    </label>
+                    </motion.label>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           )}
 
           {/* Reading History Tab */}
           {activeTab === 'history' && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Recently Viewed Articles</h3>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <h3 className={`text-xl font-bold mb-6 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Recently Viewed Articles</h3>
               {recentlyViewed.length > 0 ? (
                 <div className="space-y-2">
                   {recentlyViewed.map((articleId, index) => (
-                    <div key={index} className="p-3 bg-gray-700 rounded">
+                    <motion.div 
+                      key={index} 
+                      className={`p-4 rounded-lg border transition-colors duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 hover:bg-gray-600' 
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.01, x: 5 }}
+                    >
                       <a 
                         href={articleId} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-cyan-400 hover:text-cyan-300"
+                        className={`transition-colors duration-200 ${
+                          isDarkMode 
+                            ? 'text-cyan-400 hover:text-cyan-300' 
+                            : 'text-cyan-600 hover:text-cyan-700'
+                        }`}
                       >
                         {articleId}
                       </a>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-400">No reading history yet.</p>
+                <div className="text-center py-8">
+                  <FaHistory className={`text-4xl mx-auto mb-4 ${
+                    isDarkMode ? 'text-gray-600' : 'text-gray-400'
+                  }`} />
+                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    No reading history yet.
+                  </p>
+                </div>
               )}
-            </div>
+            </motion.div>
           )}
 
           {/* Bookmarks Tab */}
           {activeTab === 'bookmarks' && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Bookmarked Articles</h3>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <h3 className={`text-xl font-bold mb-6 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Bookmarked Articles</h3>
               {user.bookmarks?.length > 0 ? (
                 <div className="space-y-2">
                   {user.bookmarks.map((bookmark, index) => (
-                    <div key={index} className="p-3 bg-gray-700 rounded">
+                    <motion.div 
+                      key={index} 
+                      className={`p-4 rounded-lg border transition-colors duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 hover:bg-gray-600' 
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.01, x: 5 }}
+                    >
                       <a 
                         href={bookmark} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-cyan-400 hover:text-cyan-300"
+                        className={`transition-colors duration-200 ${
+                          isDarkMode 
+                            ? 'text-cyan-400 hover:text-cyan-300' 
+                            : 'text-cyan-600 hover:text-cyan-700'
+                        }`}
                       >
                         {bookmark}
                       </a>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-400">No bookmarks yet.</p>
+                <div className="text-center py-8">
+                  <FaBookmark className={`text-4xl mx-auto mb-4 ${
+                    isDarkMode ? 'text-gray-600' : 'text-gray-400'
+                  }`} />
+                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    No bookmarks yet.
+                  </p>
+                </div>
               )}
-            </div>
+            </motion.div>
           )}
 
           {/* Liked Articles Tab */}
           {activeTab === 'liked' && (
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-white">Liked Articles</h3>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            >
+              <h3 className={`text-xl font-bold mb-6 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Liked Articles</h3>
               {user.liked_articles?.length > 0 ? (
                 <div className="space-y-2">
                   {user.liked_articles.map((articleId, index) => (
-                    <div key={index} className="p-3 bg-gray-700 rounded">
+                    <motion.div 
+                      key={index} 
+                      className={`p-4 rounded-lg border transition-colors duration-200 ${
+                        isDarkMode 
+                          ? 'bg-gray-700 border-gray-600 hover:bg-gray-600' 
+                          : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                      }`}
+                      whileHover={{ scale: 1.01, x: 5 }}
+                    >
                       <a 
                         href={articleId} 
                         target="_blank" 
                         rel="noopener noreferrer"
-                        className="text-cyan-400 hover:text-cyan-300"
+                        className={`transition-colors duration-200 ${
+                          isDarkMode 
+                            ? 'text-cyan-400 hover:text-cyan-300' 
+                            : 'text-cyan-600 hover:text-cyan-700'
+                        }`}
                       >
                         {articleId}
                       </a>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-400">No liked articles yet.</p>
+                <div className="text-center py-8">
+                  <FaHeart className={`text-4xl mx-auto mb-4 ${
+                    isDarkMode ? 'text-gray-600' : 'text-gray-400'
+                  }`} />
+                  <p className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}>
+                    No liked articles yet.
+                  </p>
+                </div>
               )}
-            </div>
+            </motion.div>
           )}
-        </div>
-      </div>
-    </div>
+            </motion.div>
+          </AnimatePresence>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
