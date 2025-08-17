@@ -193,7 +193,7 @@ export default function Categories() {
                 }`}>Trending Categories</h2>
               </motion.div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="responsive-grid gap-6">
                 {trendingCategories.map((category, index) => (
                   <motion.div
                     key={category.id}
@@ -231,7 +231,7 @@ export default function Categories() {
                 }`}>{allCategories.length} categories available</span>
               </motion.div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              <div className="responsive-grid gap-6">
                 {allCategories.map((category, index) => (
                   <motion.div
                     key={category.id}

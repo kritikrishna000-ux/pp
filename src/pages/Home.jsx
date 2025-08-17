@@ -293,7 +293,7 @@ export default function Home() {
 
           {!loading && !error && articles.length > 0 && (
             <motion.div
-              className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8"
+              className="responsive-grid gap-6 sm:gap-8"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}

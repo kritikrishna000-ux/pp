@@ -99,7 +99,7 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-4">
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className={`lg:hidden p-2 rounded-lg transition-colors ${
+              className={`xl:hidden p-2 rounded-lg transition-colors ${
                 isDarkMode 
                   ? 'hover:bg-gray-700 text-gray-400' 
                   : 'hover:bg-gray-100 text-gray-600'
@@ -354,7 +354,7 @@ export default function Layout({ children }) {
       <div className="flex pt-20">
         {/* Sidebar */}
         <aside className={`fixed left-0 top-20 bottom-0 z-40 w-80 border-r transform transition-transform duration-300 ease-in-out overflow-y-auto custom-scrollbar ${
-          sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full xl:translate-x-0'
         } ${
           isDarkMode 
             ? 'bg-gray-800 border-gray-700' 
@@ -483,7 +483,7 @@ export default function Layout({ children }) {
         {/* Overlay for mobile */}
         {sidebarOpen && (
           <motion.div 
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 xl:hidden"
             onClick={() => setSidebarOpen(false)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -493,7 +493,7 @@ export default function Layout({ children }) {
         )}
 
         {/* Main Content */}
-        <main className={`flex-1 min-h-screen lg:ml-80 transition-colors duration-300 ${
+        <main className={`flex-1 min-h-screen xl:ml-80 transition-colors duration-300 ${
           isDarkMode ? 'bg-gray-900' : 'bg-gray-50'
         }`}>
           <div className="max-w-7xl mx-auto">
