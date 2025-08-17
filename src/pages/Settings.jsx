@@ -1,13 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import { FaCog, FaUser, FaShieldAlt, FaGlobe, FaMapPin, FaTag, FaPlus, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Dummy isDarkMode value for demonstration; replace with your actual dark mode logic or context
-const isDarkMode = false;
-
 export default function Settings() {
+  const { isDarkMode } = useTheme();
   const { user, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('preferences');
@@ -100,12 +99,18 @@ export default function Settings() {
   const renderPreferences = () => (
     <div className="space-y-6">
       {/* News Sources Section */}
-      <div className="bg-gray-800 dark:bg-gray-800 bg-white rounded-lg p-6">
+      <div className={`rounded-lg p-6 transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-200'
+      }`}>
         <div className="flex items-center gap-3 mb-4">
           <FaGlobe className="text-cyan-500 text-xl" />
           <div>
-            <h3 className="text-white dark:text-white text-gray-900 font-semibold text-lg">News Sources</h3>
-            <p className="text-gray-400 dark:text-gray-400 text-gray-600 text-sm">Select your preferred news sources for personalized content</p>
+            <h3 className={`font-semibold text-lg transition-colors duration-300 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>News Sources</h3>
+            <p className={`text-sm transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>Select your preferred news sources for personalized content</p>
           </div>
         </div>
         <div className="space-y-6">
@@ -113,20 +118,24 @@ export default function Settings() {
             const categorySources = newsSources.filter(source => source.category === category);
             return (
               <div key={category} className="space-y-3">
-                <h4 className="text-white dark:text-white text-gray-900 font-medium text-sm uppercase tracking-wide">
+                <h4 className={`font-medium text-sm uppercase tracking-wide transition-colors duration-300 ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>
                   {category} Sources
                 </h4>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                   {categorySources.map((source, index) => {
                     const globalIndex = newsSources.findIndex(s => s.name === source.name);
                     return (
                       <button
                         key={index}
                         onClick={() => handleNewsSourceToggle(globalIndex)}
-                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 ${
                           source.selected
                             ? 'bg-cyan-500 text-white'
-                            : 'bg-gray-700 dark:bg-gray-700 bg-gray-200 text-gray-300 dark:text-gray-300 text-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600'
+                            : isDarkMode
+                              ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                         }`}
                       >
                         {source.name}
@@ -141,23 +150,31 @@ export default function Settings() {
       </div>
 
       {/* Regions Section */}
-      <div className="bg-gray-800 dark:bg-gray-800 bg-white rounded-lg p-6">
+      <div className={`rounded-lg p-6 transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-200'
+      }`}>
         <div className="flex items-center gap-3 mb-4">
           <FaMapPin className="text-green-500 text-xl" />
           <div>
-            <h3 className="text-white dark:text-white text-gray-900 font-semibold text-lg">Regions</h3>
-            <p className="text-gray-400 dark:text-gray-400 text-gray-600 text-sm">Choose regions for localized news coverage</p>
+            <h3 className={`font-semibold text-lg transition-colors duration-300 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>Regions</h3>
+            <p className={`text-sm transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>Choose regions for localized news coverage</p>
           </div>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {regions.map((region, index) => (
             <button
               key={index}
               onClick={() => handleRegionToggle(index)}
-              className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 ${
                 region.selected
                   ? 'bg-cyan-500 text-white'
-                  : 'bg-gray-700 dark:bg-gray-700 bg-gray-200 text-gray-300 dark:text-gray-300 text-gray-700 hover:bg-gray-600 dark:hover:bg-gray-600'
+                  : isDarkMode
+                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
               {region.name}
@@ -167,12 +184,18 @@ export default function Settings() {
       </div>
 
       {/* Keywords Section */}
-      <div className="bg-gray-800 dark:bg-gray-800 bg-white rounded-lg p-6">
+      <div className={`rounded-lg p-6 transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-200'
+      }`}>
         <div className="flex items-center gap-3 mb-4">
           <FaTag className="text-purple-500 text-xl" />
           <div>
-            <h3 className="text-white dark:text-white text-gray-900 font-semibold text-lg">Keywords</h3>
-            <p className="text-gray-400 dark:text-gray-400 text-gray-600 text-sm">Add keywords to get more relevant news recommendations</p>
+            <h3 className={`font-semibold text-lg transition-colors duration-300 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}>Keywords</h3>
+            <p className={`text-sm transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}>Add keywords to get more relevant news recommendations</p>
           </div>
         </div>
         <div className="flex gap-2 mb-4">
@@ -182,11 +205,15 @@ export default function Settings() {
             onChange={(e) => setNewKeyword(e.target.value)}
             onKeyPress={handleKeyPress}
             placeholder="Add new keyword..."
-            className="flex-1 px-4 py-2 bg-gray-700 dark:bg-gray-700 bg-gray-200 text-white dark:text-white text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500"
+            className={`flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all duration-300 ${
+              isDarkMode 
+                ? 'bg-gray-700 text-white' 
+                : 'bg-gray-200 text-gray-900'
+            }`}
           />
           <button
             onClick={handleAddKeyword}
-            className="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors"
+            className="px-4 py-2 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-all duration-300 hover:scale-105"
           >
             <FaPlus className="text-sm" />
           </button>
@@ -195,12 +222,20 @@ export default function Settings() {
           {keywords.map((keyword, index) => (
             <span
               key={index}
-              className="flex items-center gap-2 px-3 py-1 bg-gray-700 dark:bg-gray-700 bg-gray-200 text-gray-300 dark:text-gray-300 text-gray-700 rounded-full text-sm"
+              className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm transition-all duration-300 ${
+                isDarkMode 
+                  ? 'bg-gray-700 text-gray-300' 
+                  : 'bg-gray-200 text-gray-700'
+              }`}
             >
               {keyword}
               <button
                 onClick={() => handleRemoveKeyword(index)}
-                className="text-gray-400 dark:text-gray-400 text-gray-600 hover:text-white dark:hover:text-white hover:text-gray-900"
+                className={`transition-colors duration-300 ${
+                  isDarkMode 
+                    ? 'text-gray-400 hover:text-white' 
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
               >
                 <FaTimes className="text-xs" />
               </button>
@@ -212,25 +247,39 @@ export default function Settings() {
   );
 
   const renderUserProfile = () => (
-    <div className="bg-gray-800 dark:bg-gray-800 bg-white rounded-lg p-8 text-center">
+    <div className={`rounded-lg p-8 text-center transition-colors duration-300 ${
+      isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-200'
+    }`}>
       {!isAuthenticated ? (
         <>
-          <div className="w-24 h-24 bg-gray-600 dark:bg-gray-600 bg-gray-300 rounded-full mx-auto mb-6 flex items-center justify-center">
-            <FaUser className="text-gray-400 dark:text-gray-400 text-gray-500 text-3xl" />
+          <div className={`w-24 h-24 rounded-full mx-auto mb-6 flex items-center justify-center transition-colors duration-300 ${
+            isDarkMode ? 'bg-gray-600' : 'bg-gray-300'
+          }`}>
+            <FaUser className={`text-3xl transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-500'
+            }`} />
           </div>
-          <h2 className="text-white dark:text-white text-gray-900 text-2xl font-bold mb-2">Login to your account</h2>
-          <p className="text-gray-400 dark:text-gray-400 text-gray-600 mb-8">Access personalized features and save your preferences</p>
+          <h2 className={`text-2xl font-bold mb-2 transition-colors duration-300 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>Login to your account</h2>
+          <p className={`mb-8 transition-colors duration-300 ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-600'
+          }`}>Access personalized features and save your preferences</p>
           <div className="flex gap-4 justify-center">
             <button
               onClick={() => navigate('/login')}
-              className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-colors flex items-center gap-2"
+              className="px-6 py-3 bg-cyan-500 text-white rounded-lg hover:bg-cyan-600 transition-all duration-300 hover:scale-105 flex items-center gap-2"
             >
               Login
               <span>→</span>
             </button>
             <button
               onClick={() => navigate('/register')}
-              className="px-6 py-3 bg-gray-700 dark:bg-gray-700 bg-gray-200 text-gray-300 dark:text-gray-300 text-gray-700 rounded-lg hover:bg-gray-600 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+              className={`px-6 py-3 rounded-lg transition-all duration-300 hover:scale-105 flex items-center gap-2 ${
+                isDarkMode 
+                  ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
             >
               <FaPlus className="text-sm" />
               <FaUser className="text-sm" />
@@ -245,12 +294,20 @@ export default function Settings() {
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </span>
           </div>
-          <h2 className="text-white dark:text-white text-gray-900 text-2xl font-bold mb-2">{user?.email}</h2>
-          <p className="text-gray-400 dark:text-gray-400 text-gray-600 mb-8">Manage your account settings and preferences</p>
+          <h2 className={`text-2xl font-bold mb-2 transition-colors duration-300 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>{user?.email}</h2>
+          <p className={`mb-8 transition-colors duration-300 ${
+            isDarkMode ? 'text-gray-400' : 'text-gray-600'
+          }`}>Manage your account settings and preferences</p>
           <div className="space-y-4">
             <div className="text-left">
-              <h3 className="text-white dark:text-white text-gray-900 font-semibold mb-2">Account Information</h3>
-              <div className="space-y-2 text-gray-300 dark:text-gray-300 text-gray-700">
+              <h3 className={`font-semibold mb-2 transition-colors duration-300 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Account Information</h3>
+              <div className={`space-y-2 transition-colors duration-300 ${
+                isDarkMode ? 'text-gray-300' : 'text-gray-700'
+              }`}>
                 <p><strong>Email:</strong> {user?.email}</p>
                 <p><strong>Member since:</strong> {user?.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'Unknown'}</p>
                 <p><strong>Articles bookmarked:</strong> {user?.bookmarks?.length || 0}</p>
@@ -265,40 +322,68 @@ export default function Settings() {
 
   const renderPrivacySecurity = () => (
     <div className="space-y-6">
-      <div className="bg-gray-800 dark:bg-gray-800 bg-white rounded-lg p-6">
+      <div className={`rounded-lg p-6 transition-colors duration-300 ${
+        isDarkMode ? 'bg-gray-800' : 'bg-white border border-gray-200'
+      }`}>
         <div className="flex items-center gap-3 mb-4">
           <FaShieldAlt className="text-green-500 text-xl" />
-          <h3 className="text-white dark:text-white text-gray-900 font-semibold text-lg">Privacy & Security</h3>
+          <h3 className={`font-semibold text-lg transition-colors duration-300 ${
+            isDarkMode ? 'text-white' : 'text-gray-900'
+          }`}>Privacy & Security</h3>
         </div>
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-700 dark:bg-gray-700 bg-gray-100 rounded-lg">
+          <div className={`flex items-center justify-between p-4 rounded-lg transition-colors duration-300 ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
             <div>
-              <h4 className="text-white dark:text-white text-gray-900 font-medium">Data Collection</h4>
-              <p className="text-gray-400 dark:text-gray-400 text-gray-600 text-sm">Allow us to collect usage data for personalization</p>
+              <h4 className={`font-medium transition-colors duration-300 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Data Collection</h4>
+              <p className={`text-sm transition-colors duration-300 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>Allow us to collect usage data for personalization</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 dark:peer-focus:ring-cyan-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-cyan-600"></div>
+              <div className={`w-11 h-6 rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600 ${
+                isDarkMode ? 'bg-gray-600 after:border-gray-300' : 'bg-gray-400 after:border-gray-300'
+              }`}></div>
             </label>
           </div>
-          <div className="flex items-center justify-between p-4 bg-gray-700 dark:bg-gray-700 bg-gray-100 rounded-lg">
+          <div className={`flex items-center justify-between p-4 rounded-lg transition-colors duration-300 ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
             <div>
-              <h4 className="text-white dark:text-white text-gray-900 font-medium">Location Services</h4>
-              <p className="text-gray-400 dark:text-gray-400 text-gray-600 text-sm">Use your location for regional news</p>
+              <h4 className={`font-medium transition-colors duration-300 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Location Services</h4>
+              <p className={`text-sm transition-colors duration-300 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>Use your location for regional news</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 dark:peer-focus:ring-cyan-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-cyan-600"></div>
+              <div className={`w-11 h-6 rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600 ${
+                isDarkMode ? 'bg-gray-600 after:border-gray-300' : 'bg-gray-400 after:border-gray-300'
+              }`}></div>
             </label>
           </div>
-          <div className="flex items-center justify-between p-4 bg-gray-700 dark:bg-gray-700 bg-gray-100 rounded-lg">
+          <div className={`flex items-center justify-between p-4 rounded-lg transition-colors duration-300 ${
+            isDarkMode ? 'bg-gray-700' : 'bg-gray-100'
+          }`}>
             <div>
-              <h4 className="text-white dark:text-white text-gray-900 font-medium">Third-party Analytics</h4>
-              <p className="text-gray-400 dark:text-gray-400 text-gray-600 text-sm">Allow third-party analytics for service improvement</p>
+              <h4 className={`font-medium transition-colors duration-300 ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>Third-party Analytics</h4>
+              <p className={`text-sm transition-colors duration-300 ${
+                isDarkMode ? 'text-gray-400' : 'text-gray-600'
+              }`}>Allow third-party analytics for service improvement</p>
             </div>
             <label className="relative inline-flex items-center cursor-pointer">
               <input type="checkbox" className="sr-only peer" />
-              <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 dark:peer-focus:ring-cyan-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-cyan-600"></div>
+              <div className={`w-11 h-6 rounded-full peer peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-cyan-300 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-cyan-600 ${
+                isDarkMode ? 'bg-gray-600 after:border-gray-300' : 'bg-gray-400 after:border-gray-300'
+              }`}></div>
             </label>
           </div>
         </div>
@@ -321,27 +406,29 @@ export default function Settings() {
 
   return (
     <motion.div 
-      className="min-h-screen transition-colors duration-500"
-      style={{ backgroundColor: isDarkMode ? '#0f172a' : '#ffffff' }}
+      className={`min-h-screen transition-colors duration-500 ${
+        isDarkMode ? 'bg-gray-900' : 'bg-gray-50'
+      }`}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex">
+      <div className="flex flex-col lg:flex-row">
         {/* Sidebar Navigation */}
         <motion.div 
-          className="w-64 min-h-screen p-6 border-r transition-colors duration-500"
-          style={{ 
-            backgroundColor: isDarkMode ? '#1e293b' : '#f8fafc',
-            borderColor: isDarkMode ? '#475569' : '#cbd5e1'
-          }}
+          className={`w-full lg:w-64 lg:min-h-screen p-6 border-b lg:border-b-0 lg:border-r transition-colors duration-500 ${
+            isDarkMode 
+              ? 'bg-gray-800 border-gray-700' 
+              : 'bg-white border-gray-200'
+          }`}
           initial={{ x: -100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
         >
           <motion.h1 
-            className="text-2xl font-bold mb-2"
-            style={{ color: isDarkMode ? '#f8fafc' : '#0f172a' }}
+            className={`text-2xl font-bold mb-2 transition-colors duration-300 ${
+              isDarkMode ? 'text-white' : 'text-gray-900'
+            }`}
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5 }}
@@ -349,8 +436,9 @@ export default function Settings() {
             Settings
           </motion.h1>
           <motion.p 
-            className="text-sm mb-8"
-            style={{ color: isDarkMode ? '#94a3b8' : '#64748b' }}
+            className={`text-sm mb-8 transition-colors duration-300 ${
+              isDarkMode ? 'text-gray-400' : 'text-gray-600'
+            }`}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.5 }}
@@ -358,7 +446,7 @@ export default function Settings() {
             Customize your news experience and manage your account
           </motion.p>
           
-          <nav className="space-y-3">
+          <nav className="flex lg:flex-col gap-3 lg:space-y-3 overflow-x-auto lg:overflow-x-visible">
             {[
               { id: 'preferences', label: 'Preferences', icon: FaCog },
               { id: 'profile', label: 'User Profile', icon: FaUser },
@@ -367,23 +455,20 @@ export default function Settings() {
               <motion.button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105"
-                style={{
-                  backgroundColor: activeTab === tab.id 
-                    ? (isDarkMode ? '#0ea5e9' : '#0891b2')
-                    : 'transparent',
-                  color: activeTab === tab.id 
-                    ? '#ffffff'
-                    : (isDarkMode ? '#e2e8f0' : '#475569')
-                }}
+                className={`flex-shrink-0 lg:w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? isDarkMode
+                      ? 'bg-cyan-500 text-white'
+                      : 'bg-cyan-600 text-white'
+                    : isDarkMode
+                      ? 'text-gray-300 hover:bg-gray-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                }`}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 + index * 0.1, duration: 0.4 }}
                 whileHover={{ 
                   x: 4,
-                  backgroundColor: activeTab === tab.id 
-                    ? (isDarkMode ? '#0284c7' : '#0e7490')
-                    : (isDarkMode ? '#334155' : '#f1f5f9')
                 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -401,7 +486,7 @@ export default function Settings() {
 
         {/* Main Content */}
         <motion.div 
-          className="flex-1 p-8"
+          className="flex-1 p-4 lg:p-8"
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}

@@ -255,53 +255,104 @@ export default function NewsCard({ article, onLike, onBookmark, onShare, showSta
           {/* Bookmark Button */}
           <motion.button
             onClick={handleBookmark}
-            className="absolute top-3 right-3 p-2 backdrop-blur-sm rounded-full transition-all duration-500 transform hover:scale-125 hover:rotate-12"
-            style={{ 
-              backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.6)' : 'rgba(255, 255, 255, 0.8)',
-              backdropFilter: 'blur(8px)',
-              boxShadow: isBookmarked 
-                ? '0 0 20px rgba(14, 165, 233, 0.6)' 
-                : '0 4px 15px rgba(0, 0, 0, 0.2)'
+            className={`absolute top-3 right-3 p-3 backdrop-blur-md rounded-full transition-all duration-700 transform group ${
+              isBookmarked
+                ? 'bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg shadow-cyan-500/50'
+                : isDarkMode
+                  ? 'bg-black/40 hover:bg-black/60 shadow-lg'
+                  : 'bg-white/80 hover:bg-white/95 shadow-lg'
+            }`}
+            whileTap={{ 
+              scale: 0.8, 
+              rotate: isBookmarked ? -15 : 15,
+              transition: { duration: 0.2, type: "spring", stiffness: 400 }
             }}
-            whileTap={{ scale: 1.6, rotate: 360 }}
             whileHover={{ 
-              scale: 1.25, 
-              rotate: 15,
-              boxShadow: isBookmarked 
-                ? '0 0 25px rgba(14, 165, 233, 0.8)' 
-                : '0 6px 20px rgba(0, 0, 0, 0.3)'
+              scale: 1.15,
+              rotate: isBookmarked ? -8 : 8,
+              y: -2,
+              transition: { duration: 0.3, type: "spring", stiffness: 300 }
             }}
-            transition={{ type: "spring", stiffness: 400, damping: 17 }}
             aria-label="Bookmark"
           >
             <AnimatePresence initial={false} mode="wait">
               {isBookmarked ? (
                 <motion.span
                   key="bookmarked"
-                  initial={{ scale: 0.3, rotate: -180, opacity: 0 }}
+                  initial={{ scale: 0.2, rotate: -90, opacity: 0 }}
                   animate={{ 
                     scale: 1, 
                     rotate: 0, 
                     opacity: 1,
-                    filter: 'drop-shadow(0 0 8px rgba(14, 165, 233, 0.8))'
                   }}
-                  exit={{ scale: 0.3, rotate: 180, opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 600, damping: 20 }}
+                  exit={{ scale: 0.2, rotate: 90, opacity: 0 }}
+                  transition={{ 
+                    type: 'spring', 
+                    stiffness: 500, 
+                    damping: 25,
+                    duration: 0.6
+                  }}
                 >
-                  <FaBookmark className="text-sm" style={{ color: isDarkMode ? '#0ea5e9' : '#06b6d4' }} />
+                  <motion.div
+                    animate={{ 
+                      scale: [1, 1.2, 1],
+                      filter: [
+                        'drop-shadow(0 0 0px rgba(255,255,255,0))',
+                        'drop-shadow(0 0 8px rgba(255,255,255,0.8))',
+                        'drop-shadow(0 0 0px rgba(255,255,255,0))'
+                      ]
+                    }}
+                    transition={{ 
+                      duration: 2, 
+                      repeat: Infinity, 
+                      ease: "easeInOut" 
+                    }}
+                  >
+                    <FaBookmark className="text-base text-white" />
+                  </motion.div>
                 </motion.span>
               ) : (
                 <motion.span
                   key="not-bookmarked"
-                  initial={{ scale: 0.3, rotate: 180, opacity: 0 }}
+                  initial={{ scale: 0.2, rotate: 90, opacity: 0 }}
                   animate={{ scale: 1, rotate: 0, opacity: 1 }}
-                  exit={{ scale: 0.3, rotate: -180, opacity: 0 }}
-                  transition={{ type: 'spring', stiffness: 600, damping: 20 }}
+                  exit={{ scale: 0.2, rotate: -90, opacity: 0 }}
+                  transition={{ 
+                    type: 'spring', 
+                    stiffness: 500, 
+                    damping: 25,
+                    duration: 0.6
+                  }}
                 >
-                  <FaBookmark className="text-sm" style={{ color: isDarkMode ? '#64748b' : '#94a3b8' }} />
+                  <motion.div
+                    whileHover={{ 
+                      scale: 1.1,
+                      transition: { duration: 0.2 }
+                    }}
+                  >
+                    <FaBookmark className={`text-base transition-colors duration-300 ${
+                      isDarkMode ? 'text-gray-400 group-hover:text-cyan-400' : 'text-gray-500 group-hover:text-cyan-600'
+                    }`} />
+                  </motion.div>
                 </motion.span>
               )}
             </AnimatePresence>
+            
+            {/* Ripple effect on click */}
+            <motion.div
+              className="absolute inset-0 rounded-full"
+              initial={{ scale: 0, opacity: 0.5 }}
+              animate={{ 
+                scale: isBookmarked ? [0, 2, 0] : 0,
+                opacity: isBookmarked ? [0.5, 0.2, 0] : 0
+              }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              style={{
+                background: isBookmarked 
+                  ? 'radial-gradient(circle, rgba(6,182,212,0.4) 0%, transparent 70%)'
+                  : 'transparent'
+              }}
+            />
           </motion.button>
         </div>
 
